@@ -11,6 +11,7 @@ class DecodedToken {
   exp: number;
   username: string;
   userrole: string;
+  userId:string;
 }
 
 @Injectable({
@@ -53,6 +54,10 @@ export class AuthService {
 
   public isAuthenticated(): boolean {
     return moment().isBefore(moment.unix(this.decodedToken.exp));
+  }
+
+  public getUserId(): string {
+    return this.decodedToken.userId;
   }
 
   public getUsername(): string {

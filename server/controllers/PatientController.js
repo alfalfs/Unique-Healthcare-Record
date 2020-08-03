@@ -16,15 +16,27 @@ exports.find = async(req, res) => {
         })
 }
 
-exports.findAllPrescriptions = async(req, res) => {
-    const { userId, ppno } = req.body
-        // const patients = await Patient.find({ prescriptions.commitedBy: userId })
-    const patients = await Patient.aggregate([{
-            $match: { 'prescriptions.commitedBye': { userId } }
-        }])
-        .then(() => {
-            console.log(patients);
-            return res.status(200).json(patients);
+exports.myPrescriptions = async(req, res) => {
+    const userId = req.params.id;
+    // const { userId, ppno } = req.body
+    // console.log(userId);
+    const prescribed = await Patient.find({ 'prescriptions.commitedBy': userId }, { 'prescriptions.$': 4 }).populate({ path: "commitedBy", model: "User" })
+        .then((prescribed) => {
+            // console.log(prescribed);
+            return res.json(prescribed).status(200);
+        })
+        .catch((err) => {
+            console.log('find failed:', err);
+            return res.status(422).json({ 'error': 'Oops! Something went wrong' });
+        })
+}
+exports.ownPrescription = async(req, res) => {
+    let userId = req.params.id;
+    // const { userId, ppno } = req.body
+    const prescription = await Patient.findOne({ 'patientid': userId }).populate({ path: "patientid", model: "User" })
+        .then((prescription) => {
+            console.log(prescription);
+            return res.status(200).json(prescription);
         })
         .catch((err) => {
             console.log(' find failed:', err);
@@ -59,39 +71,51 @@ exports.createProfile = async(req, res) => {
 // exports.pushPrescription = async function(req, res) {
 //     const { patientId, department, title, prescription, userId } = req.body
 //     const patient = await Patient.findOne({ _id: patientId })
-//     let newprescription = patient.prescriptions.create({
-//         department: req.body.department,
-//         title: req.body.title,
-//         prescription: req.body.prescription,
-//         commitedBy: req.body.userId
-//     });
-//     await patient.save((err, data) => {
-//         if (err) {
-//             console.log(err);
-//             return res.status(422).json({ 'error': 'Oops! Something went wrong' })
-//         }
-//         console.log(data);
-//         return res.status(200).json({ 'added prescription successfully': true });
-//     });
+//         .then(() => {
+//             let newprescription = patient.prescriptions.create({
+//                 department: req.body.department,
+//                 title: req.body.title,
+//                 prescription: req.body.prescription,
+//                 commitedBy: req.body.userId
+//             });
+//             await patient.save((err, data) => {
+//                 if (err) {
+//                     console.log(err);
+//                     return res.status(422).json({ 'error': 'Oops! Something went wrong' })
+//                 }
+//                 console.log(data);
+//                 return res.status(200).json({ 'added prescription successfully': true });
+//             });
+//         })
+//         .catch((err) => {
+//             console.log(' find failed:', err);
+//             return res.status(422).json({ 'error': 'Oops! Something went wrong' });
+//         })
 // }
 
 exports.createPrescription = async(req, res) => {
     const { patientId, department, title, prescription, userId } = req.body
-    const patient = await Patient.findOne({ _id: patientId })
-    patient.prescriptions.push({
-        department: department,
-        title: title,
-        prescription: prescription,
-        commitedBy: userId
-    })
-    await patient.save((err, data) => {
-        if (err) {
-            console.log(err);
-            return res.status(422).json({ 'error': 'Oops! Something went wrong' })
-        }
-        console.log(data);
-        return res.status(200).json({ 'updated prescription': true });
-    });
+    const patient = await Patient.findOne({ patientid: patientId })
+        .then(async(patient) => {
+            patient.prescriptions.push({
+                department: department,
+                title: title,
+                prescription: prescription,
+                commitedBy: userId
+            })
+            await patient.save((err, data) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(422).json({ 'error': 'Oops! Something went wrong' })
+                }
+                console.log(data);
+                return res.status(200).json({ 'updated prescription': true });
+            });
+        })
+        .catch((err) => {
+            console.log(' find failed:', err);
+            return res.status(422).json({ 'error': 'Oops! Something went wrong' });
+        })
 }
 
 exports.updatePrescription = async(req, res) => {

@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from './../../auth/auth.service';
+import { PatientDataService } from './../patient-data.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-prescriptions',
@@ -7,9 +11,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PrescriptionsComponent implements OnInit {
 
-  constructor() { }
-
+    
+  constructor(private patientDataService: PatientDataService,private auth: AuthService, private router: Router) { }
+  myPrescriptions = [];
+  userid = this.auth.getUserId();
   ngOnInit(): void {
+      this.patientDataService.getmyPrescriptions(this.userid)
+          .subscribe(data => this.myPrescriptions = data)
+          console.log(this.myPrescriptions);
   }
 
 }

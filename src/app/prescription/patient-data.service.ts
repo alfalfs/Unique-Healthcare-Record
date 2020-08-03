@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,6 +20,20 @@ export class PatientDataService {
   public getProfile(patientData: any): Observable<any> {
     const URI = this._url + '/patient';
     return this.http.post(URI, patientData);
+  }
+
+  // myPrescriptions(patientData: any): Observable <any>  {
+  //   const URI = this._url + '/prescriptions';
+  //   return this.http.get(URI, patientData);
+  // }
+
+  getmyPrescriptions(userid): Observable <any>  {
+    const URI = this._url + `/prescriptions/${userid}`;
+    return this.http.get(URI).pipe(
+      map((data: any) => {
+        return data;
+      })
+    );
   }
 
   getPatients() {
@@ -40,9 +55,13 @@ export class PatientDataService {
   //     return this.saveToken(token);
   //   }));
   // }
-  getProducts(){
-    return this.http.get("http://localhost:3000/products");
-  }
+  // public myPrescriptions(patientData: any){
+  //   this.http.request(SearchEndpoint, new RequestOptions({
+  //     method: RequestMethod.Get,
+  //     body: q.BuildPayload()
+  //   })).subscribe(...);
+    
+  // }
   newProduct(item)
   {
     return this.http.post("http://localhost:3000/insert",{"product" : item})
@@ -62,21 +81,9 @@ export class PatientDataService {
   }
 
   //update
-
   updateProduct(item){
     return this.http.post("http://localhost:3000/update", {"product":item})
     .subscribe(data=>{console.log("updateservice" + data)})
   }
-
-  // //SIGNUP AND LOGIN 
-  // registerUser(user){
-  //   return this.http.post(this._registerUrl , user)
-  // }
-  // loginUser(user){
-  //   return this.http.post(this._loginUrl , user)
-  // }
-  // loggedIn()
-  // {
-  //   return !!localStorage.getItem('token')
-  // }
+ 
 }
