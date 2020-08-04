@@ -20,7 +20,10 @@ exports.myPrescriptions = async(req, res) => {
     const userId = req.params.id;
     // const { userId, ppno } = req.body
     // console.log(userId);
-    const prescribed = await Patient.find({ 'prescriptions.commitedBy': userId }, { 'prescriptions.$': 4 }).populate({ path: "commitedBy", model: "User" })
+    const prescribed = await Patient.find({ 'prescriptions.commitedBy': userId }, { 'prescriptions.$': 4 })
+        .populate({ path: "_id", model: "Patient", select: ' -prescriptions' })
+        //.populate({ path: "_id", model: "Patient", select: ' patientname patientid sex dob blood address _id createdAt' })
+        //.populate({ path: "patientid", model: "User" })
         .then((prescribed) => {
             // console.log(prescribed);
             return res.json(prescribed).status(200);
@@ -34,12 +37,14 @@ exports.ownPrescription = async(req, res) => {
     let userId = req.params.id;
     // const { userId, ppno } = req.body
     const prescription = await Patient.findOne({ 'patientid': userId }).populate({ path: "patientid", model: "User" })
+        //populate({ path: 'patientid', select: 'patientname' })
+        //.populate({ path: "patientid", model: "User", select: 'patientname' })
         .then((prescription) => {
-            console.log(prescription);
+            //console.log(prescription);
             return res.status(200).json(prescription);
         })
         .catch((err) => {
-            console.log(' find failed:', err);
+            //console.log(' find failed:', err);
             return res.status(422).json({ 'error': 'Oops! Something went wrong' });
         })
 }

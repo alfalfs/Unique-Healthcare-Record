@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpResponse } from '@angular/common/http';
+import { Prescriptions } from './prescriptions';
+
 
 @Injectable({
   providedIn: 'root'
@@ -29,12 +31,15 @@ export class PatientDataService {
 
   getmyPrescriptions(userid): Observable <any>  {
     const URI = this._url + `/prescriptions/${userid}`;
-    return this.http.get(URI).pipe(
+    return this.http.get<any> (URI)//;
+    .pipe(
       map((data: any) => {
         return data;
       })
     );
-  }
+  } 
+
+
 
   getPatients() {
     return this.http.get(this._url + '/patients').pipe(

@@ -13,10 +13,17 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
-mongoose.connect(config.DB).then(
-    () => { console.log('Database is connected') },
-    err => { console.log('Can not connect to the database' + err) }
-);
+// mongoose.connect(config.DB).then(
+//     () => { console.log('Database is connected') },
+//     err => { console.log('Can not connect to the database' + err) }
+// );
+// connection string
+// mongoose.connect(config.DB, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(config.DB)
+const db = mongoose.connection
+    //consoling mongo status
+db.on('error', error => console.error(error)) // error log 
+db.once('open', () => console.log('Connected to Mongoose')) // indication to db server okay
 
 const app = express();
 
