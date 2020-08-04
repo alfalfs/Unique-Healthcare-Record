@@ -1,4 +1,14 @@
-# Angularjwtauth
+# Unique-Healthcare-Record 
+
+This project is patient and doctor role based authenication , such that doctor can prescribe to patients and both of themcan view it accordingly.
+
+some of the useremails for testing with common password "Ab@12" :
+1.alfa@gm.com
+2.alfi@gm.com
+3.dralfa@gm.com
+4.dralfi@gm.com
+
+## Angularjwtauth
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.0.
 
